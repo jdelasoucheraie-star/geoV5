@@ -286,7 +286,7 @@ function finish(){
   $("final").textContent=pts;
   $("finalSub").textContent=`Best streak : ${bestStreak} · Record ${zone} : ${Math.max(prev,pts)}`;
   const ul=$("misses"); ul.innerHTML="";
-  $("missLbl").textContent=misses.length?"Tu fera gaffe t'a oublié ça":"Nice";
+  $("missLbl").textContent=misses.length?"Tu fera gaffe t'as oublié ça":"Nice";
   misses.forEach(m=>{const li=document.createElement("li");li.innerHTML="<span></span><span></span>";li.firstChild.textContent=`${m.f}  ${m.c}`;li.lastChild.textContent=m.k;ul.appendChild(li)});
 }
 $("start").onclick=start; $("again").onclick=start;
