@@ -27,7 +27,7 @@
 }
 html,body{height:100%}
 body{background:var(--space);color:var(--fg);font-family:var(--ui);font-size:17px}
-#planet{position:fixed;z-index:0;pointer-events:none;left:0;top:0;width:100vw;height:100vh}
+#planet,#fire{position:fixed;z-index:0;pointer-events:none;left:0;top:0;width:100vw;height:100vh}
 .wrap{position:relative;z-index:1;max-width:560px;margin:0 auto;padding:18px 16px 28px;display:flex;flex-direction:column;gap:14px;min-height:100%}
 header{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
 .brand{font-weight:800;font-size:20px;color:var(--fg);letter-spacing:-.01em}
@@ -83,12 +83,26 @@ header{display:flex;justify-content:space-between;align-items:baseline;gap:12px;
 .gate .fl{font-size:42px;line-height:1;font-family:"Twemoji Country Flags","Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif}
 .toast{text-align:center;font-size:14px;font-weight:600;color:var(--lime);min-height:18px}
 #feedback{background:var(--card);border-radius:10px;padding:6px}
+/* roue des paramètres + interrupteurs */
+.home-top{display:flex;justify-content:space-between;align-items:center}
+.gear{width:38px;height:38px;display:grid;place-items:center;padding:0;background:transparent;color:var(--fg);border:1.5px solid var(--line);border-radius:50%;cursor:pointer}
+.gear:hover{border-color:var(--blue)}
+.gear:focus-visible{outline:3px solid var(--lime);outline-offset:2px}
+.gear svg{width:20px;height:20px}
+.opt{display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;background:transparent;color:var(--fg);border:1.5px solid var(--line);border-radius:14px;padding:12px 14px;font:600 17px var(--ui);text-align:left;cursor:pointer}
+.opt small{display:block;margin-top:2px;font-weight:400;font-size:13px;color:var(--muted)}
+.opt i{flex:none;position:relative;width:48px;height:28px;border-radius:14px;background:rgba(255,255,255,.18);transition:background .2s}
+.opt i::after{content:"";position:absolute;top:4px;left:4px;width:20px;height:20px;border-radius:50%;background:var(--fg);transition:transform .2s}
+.opt[aria-checked="true"] i{background:var(--lime)}
+.opt[aria-checked="true"] i::after{transform:translateX(20px);background:var(--space)}
+.opt:focus-visible{outline:3px solid var(--lime);outline-offset:2px}
 #feedback:empty{visibility:hidden}
 </style>
 
 </head>
 <body>
 <canvas id="planet" aria-hidden="true"></canvas>
+<canvas id="fire" aria-hidden="true"></canvas>
 <div class="wrap">
   <header>
     <div class="brand">Capitales <em>du monde</em></div>
@@ -104,7 +118,9 @@ header{display:flex;justify-content:space-between;align-items:baseline;gap:12px;
 
   <!-- Écran d'accueil -->
   <div id="home" class="setup">
-    <div class="label">Zone</div>
+    <div class="home-top"><div class="label">Zone</div>
+      <button class="gear" id="gear" aria-label="Paramètres" title="Paramètres"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+    </div>
     <div class="chips" id="zones"></div>
     <div class="label">Mode</div>
     <div class="chips" id="dirs">
@@ -127,6 +143,14 @@ header{display:flex;justify-content:space-between;align-items:baseline;gap:12px;
     </div>
     <button class="go" id="start">Jouer</button>
     <div class="toast" id="best"></div>
+  </div>
+
+  <!-- Paramètres -->
+  <div id="settings" class="setup" hidden>
+    <div class="label">Paramètres</div>
+    <button class="opt" id="optFire" role="switch" aria-checked="true"><span>Flammes<small>La Terre brûle quand ta série monte</small></span><i></i></button>
+    <button class="opt" id="optHap" role="switch" aria-checked="true"><span>Vibrations<small>Retour haptique sur téléphone</small></span><i></i></button>
+    <button class="go" id="setBack">OK</button>
   </div>
 
   <!-- Jeu -->
@@ -190,6 +214,24 @@ const $=id=>document.getElementById(id);
 const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
 const shuffle=a=>{for(let j=a.length-1;j>0;j--){const r=Math.random()*(j+1)|0;[a[j],a[r]]=[a[r],a[j]]}return a};
 
+// Paramètres (gardés sur l'appareil)
+let FIRE=store.get("cap-fire")!=="0", HAPTIC=store.get("cap-haptic")!=="0";
+// Retour haptique : Android → navigator.vibrate ; iPhone (iOS 18+) → astuce de l'interrupteur natif de Safari
+const iosTap=(()=>{const l=document.createElement("label"),c=document.createElement("input");
+  c.type="checkbox";c.setAttribute("switch","");l.setAttribute("aria-hidden","true");l.style.display="none";l.appendChild(c);
+  document.body.appendChild(l);return()=>{try{l.click()}catch(e){}}})();
+function buzz(kind){
+  if(!HAPTIC) return;
+  const pat={ok:25,ko:[70,50,70],tap:15}[kind];
+  if(navigator.vibrate){try{navigator.vibrate(pat)}catch(e){}}
+  else{iosTap(); if(kind==="ko") setTimeout(iosTap,130)}
+}
+function syncOpts(){$("optFire").setAttribute("aria-checked",FIRE);$("optHap").setAttribute("aria-checked",HAPTIC)}
+$("gear").onclick=()=>{$("home").hidden=true;$("settings").hidden=false;flap("Paramètres");$("ask").textContent="Règle le jeu à ton goût";syncOpts()};
+$("setBack").onclick=()=>{$("settings").hidden=true;$("home").hidden=false;homeTitle();showBest()};
+$("optFire").onclick=()=>{FIRE=!FIRE;store.set("cap-fire",FIRE?"1":"0");Fire.enable(FIRE);syncOpts()};
+$("optHap").onclick=()=>{HAPTIC=!HAPTIC;store.set("cap-haptic",HAPTIC?"1":"0");syncOpts();buzz("tap")};
+
 // Affichage simple, sans animation
 function flap(text){
   const el=$("flap"); el.innerHTML="";
@@ -224,7 +266,7 @@ function start(){
   const pool=zone==="Monde"?ALL:ALL.filter(x=>x.z===zone);
   qs=shuffle([...pool]).slice(0,roundLen()); i=0;pts=0;streak=0;bestStreak=0;good=0;misses=[];
   $("home").hidden=true;$("end").hidden=true;$("game").hidden=false;$("feedback").hidden=false;
-  $("pts").textContent=0;$("streak").textContent=0;
+  $("pts").textContent=0;$("streak").textContent=0; Fire.set(0);
   $("lblRegion").textContent=zone; next();
 }
 function next(){
@@ -267,13 +309,13 @@ function answer(btn){
   if(right){
     streak++;good++;bestStreak=Math.max(bestStreak,streak);
     let gain=Math.round((50+left/TIME*50)*(1+(CHOICES-4)*.15)); if(streak>=3)gain=Math.round(gain*1.25);
-    pts+=gain; $("feedback").textContent=`+${gain}`+(streak>=3?` · série ×${streak}`:"");
+    buzz("ok"); pts+=gain; $("feedback").textContent=`+${gain}`+(streak>=3?` · série ×${streak}`:"");
   }else{
-    if(btn)btn.classList.add("ko");
+    if(btn)btn.classList.add("ko"); buzz("ko");
     streak=0; misses.push(q);
     $("feedback").textContent=btn?reveal(q):`Temps écoulé · ${reveal(q)}`;
   }
-  $("pts").textContent=pts;$("streak").textContent=streak;
+  $("pts").textContent=pts;$("streak").textContent=streak; Fire.set(streak);
   i++; setTimeout(next,right?900:1900);
 }
 function finish(){
@@ -290,7 +332,7 @@ function finish(){
   misses.forEach(m=>{const li=document.createElement("li");li.innerHTML="<span></span><span></span>";li.firstChild.textContent=`${m.f}  ${m.c}`;li.lastChild.textContent=m.k;ul.appendChild(li)});
 }
 $("start").onclick=start; $("again").onclick=start;
-$("menu").onclick=()=>{$("end").hidden=true;$("home").hidden=false;homeTitle();$("qn").textContent="–";showBest()};
+$("menu").onclick=()=>{$("end").hidden=true;$("home").hidden=false;homeTitle();$("qn").textContent="–";Fire.set(0);showBest()};
 
 chips(); showBest();
 homeTitle();
@@ -298,6 +340,7 @@ homeTitle();
 <script>if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>
 <script>
 // Terre dessinée une seule fois dans l'espace (pas d'animation)
+let EARTH=null; // géométrie gardée pour le feu : centre, rayon, contours des continents
 function drawPlanet(){
   const c=document.getElementById("planet"), dpr=Math.min(2,devicePixelRatio||1);
   const W=innerWidth,H=innerHeight; c.width=W*dpr;c.height=H*dpr;
@@ -315,19 +358,19 @@ function drawPlanet(){
   // la Terre
   const R=Math.min(W*.44,H*.34), cx=W/2, cy=H*.6;
   const blob=(bx,by,br,sq,jit)=>{const n=14,pts=[];for(let a=0;a<n;a++){const th=a/n*Math.PI*2,r=br*(1-jit/2+rnd()*jit);pts.push([bx+Math.cos(th)*r,by+Math.sin(th)*r*sq])}
-    x.beginPath();const m=(i)=>{const A=pts[i%n],B=pts[(i+1)%n];return[(A[0]+B[0])/2,(A[1]+B[1])/2]};let s0=m(n-1);x.moveTo(s0[0],s0[1]);
-    for(let i=0;i<n;i++){const q=m(i);x.quadraticCurveTo(pts[i][0],pts[i][1],q[0],q[1])}x.closePath();x.fill()};
+    const p=new Path2D();const m=(i)=>{const A=pts[i%n],B=pts[(i+1)%n];return[(A[0]+B[0])/2,(A[1]+B[1])/2]};let s0=m(n-1);p.moveTo(s0[0],s0[1]);
+    for(let i=0;i<n;i++){const q=m(i);p.quadraticCurveTo(pts[i][0],pts[i][1],q[0],q[1])}p.closePath();x.fill(p);return p};
   x.save(); x.beginPath(); x.arc(cx,cy,R,0,7); x.clip();
   x.fillStyle="#1d5fae"; x.fillRect(cx-R,cy-R,2*R,2*R);
   // océan en bandes ondulées
   const blues=["#2470bd","#2d82cc","#3a94d8","#2a78c4"];
   for(let k=0;k<14;k++){x.fillStyle=blues[k%4]; blob(cx+(rnd()-.5)*1.8*R,cy+(rnd()-.5)*1.8*R,R*(.25+rnd()*.35),.45+rnd()*.3,.5)}
   // continents : bord vert, intérieur citron
-  const lands=[[-.45,-.35,.28],[-.3,.25,.22],[.25,-.4,.24],[.35,.15,.3],[.6,-.1,.16],[-.05,.75,.2],[.1,-.85,.18]];
+  const lands=[[-.45,-.35,.28],[-.3,.25,.22],[.25,-.4,.24],[.35,.15,.3],[.6,-.1,.16],[-.05,.75,.2],[.1,-.85,.18]], landPaths=[];
   for(const [dx,dy,dr] of lands){
     const bx=cx+dx*R, by=cy+dy*R, br=dr*R, st=s;
     x.fillStyle="#4fb3e6"; blob(bx,by,br*1.12,.85,.45); s=st;
-    x.fillStyle="#6cbf14"; blob(bx,by,br,.85,.45);
+    x.fillStyle="#6cbf14"; landPaths.push(blob(bx,by,br,.85,.45));
     x.fillStyle="#a6e22e"; blob(bx-br*.08,by-br*.06,br*.68,.8,.5);
     x.fillStyle="#d4f56b"; blob(bx-br*.18,by-br*.15,br*.28,.8,.6);
   }
@@ -336,8 +379,122 @@ function drawPlanet(){
   g.addColorStop(0,"rgba(0,0,0,0)"); g.addColorStop(1,"rgba(5,20,45,.45)");
   x.fillStyle=g; x.fillRect(cx-R,cy-R,2*R,2*R);
   x.restore();
+  EARTH={cx,cy,R,lands:landPaths};
 }
-drawPlanet(); let rz; addEventListener("resize",()=>{clearTimeout(rz);rz=setTimeout(drawPlanet,200)});
+
+// Feu : plus la série monte, plus la Terre brûle (série 0 = calme, série 10+ = en feu)
+// - séries 1 à 3 : des petites flammes apparaissent une par une sur les continents
+// - à partir de la série 4 : une grosse flamme derrière la Terre, qui grandit jusqu'à la série 10
+const Fire=(()=>{
+  const c=document.getElementById("fire"), probe=document.createElement("canvas").getContext("2d");
+  const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let x,W,H,heat=0,target=0,burn=0,burnT=0,nOn=0,flare=0,spots=[],raf=0,last=0,time=0;
+
+  // série → chaleur (0..1)
+  const bigOf=n=>n<4?0:Math.min(1,(n-3)/7);           // grosse flamme : 0 avant la série 4, max à 10
+  const burnOf=n=>Math.min(1,Math.max(0,n)/8);           // continents qui roussissent
+  const countOf=n=>n<=0?0:n<=4?n:Math.min(spots.length,4+(n-4)*2); // 1,2,3,4 puis +2 par bonne réponse
+  const easeBack=t=>{const k=1.9;t=Math.min(1,Math.max(0,t));return 1+(k+1)*Math.pow(t-1,3)+k*Math.pow(t-1,2)};
+
+  function resize(){
+    const dpr=Math.min(2,devicePixelRatio||1); W=innerWidth;H=innerHeight;
+    c.width=W*dpr;c.height=H*dpr; x=c.getContext("2d"); x.setTransform(dpr,0,0,dpr,0,0);
+    // emplacements des petites flammes : sur les continents, bien espacés
+    const old=spots; spots=[]; const E=EARTH;
+    if(E) for(let t=0;t<3000&&spots.length<14;t++){
+      const a=Math.random()*6.283, r=Math.sqrt(Math.random())*E.R*.86, px=E.cx+Math.cos(a)*r, py=E.cy+Math.sin(a)*r;
+      if(E.lands.some(p=>probe.isPointInPath(p,px,py))&&spots.every(s=>Math.hypot(s.x-px,s.y-py)>E.R*.2))
+        spots.push({x:px,y:py,k:.75+Math.random()*.45,ph:Math.random()*6.283,a:0});
+    }
+    // les premières flammes apparaissent en bas de la Terre (la partie que les boutons ne cachent pas)
+    spots.sort((a,b)=>b.y-a.y); spots.forEach((s,j)=>{if(old[j]) s.a=old[j].a});
+    paint();
+  }
+
+  let on=true;
+  function enable(v){on=v; if(!v) set(0)}
+  function set(n){
+    if(!on) n=0;
+    const nt=bigOf(n);
+    if(n>0&&countOf(n)>=nOn) flare=1;   // petit sursaut à chaque bonne réponse
+    target=nt; burnT=burnOf(n); nOn=countOf(n);
+    if(reduce){heat=target;burn=burnT;spots.forEach((s,j)=>s.a=j<nOn?1:0);paint();return}
+    if(!raf){last=performance.now();raf=requestAnimationFrame(loop)}
+  }
+
+  // contour de la grosse flamme : un cercle autour de la Terre + une grande langue en haut et deux petites sur les côtés
+  // forme de flamme (sert pour la grosse ET les petites) : cercle de rayon base + langues de feu, pointe vers le haut
+  function flamePath(cx,cy,base,tip,t,N=120){
+    const p=new Path2D(), sway=.07*Math.sin(t*1.6);
+    const tongues=[[0,1,.55],[-.95,.42,.26],[.8,.3,.24],[1.75,.14,.2],[-1.9,.1,.2]];
+    for(let j=0;j<=N;j++){
+      const th=j/N*2*Math.PI-Math.PI, a=th-sway;
+      let f=0; tongues.forEach(([c0,amp,w],q)=>{const d=Math.abs(a-c0); if(d<w) f+=amp*(1+.12*Math.sin(t*(3+q)+q))*Math.pow(1-d/w,1.6)});
+      const r=base*(1+.012*Math.sin(t*5+th*6))+tip*f;
+      const px=cx+Math.sin(th)*r, py=cy-Math.cos(th)*r;
+      j?p.lineTo(px,py):p.moveTo(px,py);
+    }
+    p.closePath(); return p;
+  }
+
+  function paint(){
+    if(!x) return;
+    x.clearRect(0,0,W,H);
+    const E=EARTH; if(!E||heat<.004&&burn<.004&&!spots.some(s=>s.a>.01)) return;
+    const h=heat, R=E.R, pulse=1+flare*.08;
+    if(h>.004){
+      // lueur douce derrière
+      const g=x.createRadialGradient(E.cx,E.cy-R*.1*h,R*.9,E.cx,E.cy-R*.1*h,R*(1.3+h*.5));
+      g.addColorStop(0,`rgba(255,110,20,${.35*h})`); g.addColorStop(1,"rgba(255,60,0,0)");
+      x.fillStyle=g; x.fillRect(0,0,W,H);
+      // grosse flamme en 3 couches (rouge → orange → jaune), avec un contour sombre façon cartoon
+      const off=R*(.05+.17*h)*pulse, tip=R*(.22+.6*h)*pulse;
+      const L=[[1,1,"#e2330d",.0],[.62,.68,"#ff8a1a",.7],[.3,.4,"#ffd23f",1.4]];
+      L.forEach(([ko,kt,col,dt],q)=>{
+        const p=flamePath(E.cx,E.cy,R+off*ko,tip*kt,time+dt);
+        if(q===0){x.lineJoin="round";x.lineWidth=4;x.strokeStyle="#3a0b05";x.stroke(p)}
+        x.fillStyle=col; x.fill(p);
+      });
+      // on « découpe » la Terre pour que la flamme reste derrière
+      x.globalCompositeOperation="destination-out"; x.beginPath(); x.arc(E.cx,E.cy,R-.5,0,7); x.fill();
+      x.globalCompositeOperation="source-over";
+      x.lineWidth=3; x.strokeStyle=`rgba(58,11,5,${Math.min(1,h*3)})`; x.beginPath(); x.arc(E.cx,E.cy,R+1,0,7); x.stroke();
+    }
+    if(burn>.004){
+      // la Terre chauffe : océans plus chauds, continents roussis
+      const b=burn;
+      x.save(); x.beginPath(); x.arc(E.cx,E.cy,R,0,7); x.clip();
+      x.fillStyle=`rgba(255,90,20,${.2*b})`; x.fillRect(E.cx-R,E.cy-R,2*R,2*R);
+      x.fillStyle=`rgba(70,25,8,${.55*b})`; for(const p of E.lands) x.fill(p);
+      x.lineWidth=2; x.strokeStyle=`rgba(255,140,40,${.8*b})`; for(const p of E.lands) x.stroke(p);
+      x.restore();
+    }
+    // petites flammes sur les continents : même forme et mêmes couleurs que la grosse, en miniature
+    const ih=R*(.2+.08*burn);
+    for(const s of spots){
+      if(s.a<=.01) continue;
+      const sc=easeBack(s.a)*s.k*(1+flare*.06), b=ih*.36*sc, tp=ih*.48*sc, t=time*1.3+s.ph;
+      [[1,1,"#e2330d"],[.66,.68,"#ff8a1a"],[.36,.4,"#ffd23f"]].forEach(([kb,kt,col])=>{
+        x.fillStyle=col; x.fill(flamePath(s.x,s.y-b,b*kb,tp*kt,t,48));
+      });
+    }
+  }
+
+  function loop(now){
+    const dt=Math.min(.05,(now-last)/1000); last=now; time+=dt;
+    heat+=(target-heat)*Math.min(1,dt*(target>heat?2.5:1.6)); if(Math.abs(target-heat)<.003) heat=target;
+    flare=Math.max(0,flare-dt*2.5);
+    burn+=(burnT-burn)*Math.min(1,dt*2); if(Math.abs(burnT-burn)<.003) burn=burnT;
+    const n=nOn; spots.forEach((s,j)=>{ s.a = j<n ? Math.min(1,s.a+dt*3) : Math.max(0,s.a-dt*2.5) });
+    paint();
+    if(heat>0||target>0||burn>0||burnT>0||spots.some(s=>s.a>0)) raf=requestAnimationFrame(loop);
+    else {raf=0; x.clearRect(0,0,W,H)}
+  }
+  return {set,resize,enable};
+})();
+
+drawPlanet(); Fire.resize(); Fire.enable(FIRE);
+let rz; addEventListener("resize",()=>{clearTimeout(rz);rz=setTimeout(()=>{drawPlanet();Fire.resize()},200)});
 </script>
 </body>
 </html>
