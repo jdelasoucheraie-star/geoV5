@@ -34,7 +34,7 @@ header{display:flex;justify-content:space-between;align-items:baseline;gap:12px;
 .brand em{font-style:normal;color:var(--lime)}
 .stats{display:flex;gap:12px;font-family:var(--num);font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
 .stats b{color:var(--fg)}
-
+ 
 .board{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 14px 16px;display:flex;flex-direction:column;gap:10px}
 .row-label{display:flex;justify-content:space-between;font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
 .flap{display:flex;justify-content:center;min-height:48px;align-items:center}
@@ -42,7 +42,7 @@ header{display:flex;justify-content:space-between;align-items:baseline;gap:12px;
 .ask{font-size:18px;font-weight:600;text-align:center;color:var(--fg)}
 .timer{height:6px;background:rgba(255,255,255,.12);border-radius:3px;overflow:hidden}
 .timer i{display:block;height:100%;width:100%;background:linear-gradient(90deg,var(--lime),var(--blue));transform-origin:left}
-
+ 
 .gates{display:grid;grid-template-columns:1fr;gap:10px}
 .gate{display:flex;align-items:center;justify-content:center;gap:14px;width:100%;text-align:center;background:var(--card);color:var(--fg);border:1.5px solid var(--line);border-radius:14px;padding:13px 14px;font:600 20px/1.2 var(--ui);cursor:pointer}
 .gate:hover:not(:disabled){border-color:var(--blue)}
@@ -59,7 +59,7 @@ header{display:flex;justify-content:space-between;align-items:baseline;gap:12px;
 .gates.many .gate .tag{width:26px;height:26px;font-size:13px}
 .gates.many .gate .fl{font-size:36px}
 .gates.many .gate:last-child:nth-child(odd){grid-column:span 2}
-
+ 
 .setup{display:flex;flex-direction:column;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 14px}
 .label{font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
@@ -69,7 +69,7 @@ header{display:flex;justify-content:space-between;align-items:baseline;gap:12px;
 .go{background:var(--lime);color:var(--space);border:0;border-radius:12px;padding:15px;font:800 19px var(--ui);cursor:pointer}
 .go:focus-visible{outline:3px solid var(--fg);outline-offset:2px}
 .go.alt{background:transparent;color:var(--fg);border:1.5px solid var(--line)}
-
+ 
 .result{text-align:center;display:flex;flex-direction:column;gap:4px}
 .result .big{font-family:var(--num);font-size:46px;font-weight:700;color:var(--lime);font-variant-numeric:tabular-nums}
 .result small{color:var(--muted);font-size:14px}
@@ -98,7 +98,7 @@ header{display:flex;justify-content:space-between;align-items:baseline;gap:12px;
 .opt:focus-visible{outline:3px solid var(--lime);outline-offset:2px}
 #feedback:empty{visibility:hidden}
 </style>
-
+ 
 </head>
 <body>
 <canvas id="planet" aria-hidden="true"></canvas>
@@ -108,14 +108,14 @@ header{display:flex;justify-content:space-between;align-items:baseline;gap:12px;
     <div class="brand">Capitales <em>du monde</em></div>
     <div class="stats"><span>Q <b id="qn">–</b></span><span>Série <b id="streak">0</b></span><span>Pts <b id="pts">0</b></span></div>
   </header>
-
+ 
   <section class="board" aria-live="polite">
     <div class="row-label"><span id="lblTop">Pays</span><span id="lblRegion">Monde</span></div>
     <div class="flap" id="flap"></div>
     <div class="ask" id="ask">10 questions, 10 secondes chacune</div>
     <div class="timer"><i id="bar"></i></div>
   </section>
-
+ 
   <!-- Écran d'accueil -->
   <div id="home" class="setup">
     <div class="home-top"><div class="label">Zone</div>
@@ -128,14 +128,10 @@ header{display:flex;justify-content:space-between;align-items:baseline;gap:12px;
       <button class="chip" id="d2" aria-pressed="false" data-d="cp">Capitale → pays</button>
       <button class="chip" id="d3" aria-pressed="false" data-d="fp">Drapeau → pays</button>
       <button class="chip" id="d4" aria-pressed="false" data-d="pf">Pays → drapeau</button>
+      <button class="chip" id="d5" aria-pressed="false" data-d="full">Full (mix)</button>
     </div>
     <div class="label">Questions par série</div>
-    <div class="chips" id="lens">
-      <button class="chip" id="n10" aria-pressed="true" data-n="10">10</button>
-      <button class="chip" id="n20" aria-pressed="false" data-n="20">20</button>
-      <button class="chip" id="n30" aria-pressed="false" data-n="30">30</button>
-      <button class="chip" id="nall" aria-pressed="false" data-n="0">Toutes</button>
-    </div>
+    <div class="chips" id="lens"></div>
     <div class="label">Réponses proposées</div>
     <div class="chips" id="chs">
       <button class="chip" id="c4" aria-pressed="true" data-c="4">4</button>
@@ -144,7 +140,7 @@ header{display:flex;justify-content:space-between;align-items:baseline;gap:12px;
     <button class="go" id="start">Jouer</button>
     <div class="toast" id="best"></div>
   </div>
-
+ 
   <!-- Paramètres -->
   <div id="settings" class="setup" hidden>
     <div class="label">Paramètres</div>
@@ -152,11 +148,11 @@ header{display:flex;justify-content:space-between;align-items:baseline;gap:12px;
     <button class="opt" id="optHap" role="switch" aria-checked="true"><span>Vibrations<small>Retour haptique sur téléphone</small></span><i></i></button>
     <button class="go" id="setBack">OK</button>
   </div>
-
+ 
   <!-- Jeu -->
   <div id="game" class="gates" hidden></div>
   <div class="toast" id="feedback" hidden></div>
-
+ 
   <!-- Fin -->
   <div id="end" class="setup" hidden>
     <div class="result"><div class="big" id="final">0</div><small id="finalSub"></small></div>
@@ -166,7 +162,7 @@ header{display:flex;justify-content:space-between;align-items:baseline;gap:12px;
     <div class="btns"><button class="go" id="again">Rejouer</button><button class="go alt" id="menu">Changer de zone</button></div>
   </div>
 </div>
-
+ 
 <script>
 const D = {
 Europe:[["France","Paris"],["Allemagne","Berlin"],["Espagne","Madrid"],["Italie","Rome"],["Portugal","Lisbonne"],["Royaume-Uni","Londres"],["Irlande","Dublin"],["Belgique","Bruxelles"],["Pays-Bas","Amsterdam"],["Luxembourg","Luxembourg"],["Suisse","Berne"],["Autriche","Vienne"],["Pologne","Varsovie"],["Tchéquie","Prague"],["Slovaquie","Bratislava"],["Hongrie","Budapest"],["Roumanie","Bucarest"],["Bulgarie","Sofia"],["Grèce","Athènes"],["Croatie","Zagreb"],["Slovénie","Ljubljana"],["Serbie","Belgrade"],["Bosnie-Herzégovine","Sarajevo"],["Monténégro","Podgorica"],["Albanie","Tirana"],["Macédoine du Nord","Skopje"],["Danemark","Copenhague"],["Norvège","Oslo"],["Suède","Stockholm"],["Finlande","Helsinki"],["Islande","Reykjavik"],["Estonie","Tallinn"],["Lettonie","Riga"],["Lituanie","Vilnius"],["Ukraine","Kiev"],["Biélorussie","Minsk"],["Moldavie","Chisinau"],["Russie","Moscou"],["Malte","La Valette"],["Chypre","Nicosie"],["Andorre","Andorre-la-Vieille"],["Liechtenstein","Vaduz"],["Monaco", "Monaco"],["Saint-Marin", "Saint-Marin"],["Vatican", "Vatican", "hors ONU, État observateur"],["Kosovo", "Pristina", "hors ONU, reconnaissance partielle"]],
@@ -185,8 +181,11 @@ Océanie:"AU NZ FJ PG WS TO VU SB KI MH FM NR PW TV"
 const flagOf=code=>String.fromCodePoint(...[...code].map(ch=>0x1F1E6+ch.charCodeAt(0)-65));
 const ZONES=["Monde",...Object.keys(D)];
 const ALL=Object.entries(D).flatMap(([z,l])=>l.map(([c,k,n],j)=>({c,k,n,z,f:flagOf(C[z].split(" ")[j])})));
-const isFlag=()=>dir==="fp"||dir==="pf";
-const reveal=q=>(isFlag()?`${q.f}  ${q.c} · ${q.k}`:`${q.c} → ${q.k}`)+(q.n?` (${q.n})`:"");
+// Mode full : chaque question prend un des 4 modes, répartis à égalité sur la série
+const MODES=["pc","cp","fp","pf"];
+let cur="pc", qd=[];   // mode de la question en cours / modes de toute la série
+const isFlag=(d=cur)=>d==="fp"||d==="pf";
+const reveal=q=>(dir==="full"||isFlag()?`${q.f}  ${q.c} · ${q.k}`:`${q.c} → ${q.k}`)+(q.n?` (${q.n})`:"");
 let ROUND=10, CHOICES=4; const TIME=10000;
 // GIF de fin selon le % de bonnes réponses (min/max = paliers en %)
 const GIFS=[
@@ -213,7 +212,7 @@ let zone="Monde", dir="pc", qs=[], i=0, pts=0, streak=0, bestStreak=0, good=0, m
 const $=id=>document.getElementById(id);
 const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
 const shuffle=a=>{for(let j=a.length-1;j>0;j--){const r=Math.random()*(j+1)|0;[a[j],a[r]]=[a[r],a[j]]}return a};
-
+ 
 // Paramètres (gardés sur l'appareil)
 let FIRE=store.get("cap-fire")!=="0", HAPTIC=store.get("cap-haptic")!=="0";
 // Retour haptique : Android → navigator.vibrate ; iPhone (iOS 18+) → astuce de l'interrupteur natif de Safari
@@ -231,14 +230,14 @@ $("gear").onclick=()=>{$("home").hidden=true;$("settings").hidden=false;flap("Pa
 $("setBack").onclick=()=>{$("settings").hidden=true;$("home").hidden=false;homeTitle();showBest()};
 $("optFire").onclick=()=>{FIRE=!FIRE;store.set("cap-fire",FIRE?"1":"0");Fire.enable(FIRE);syncOpts()};
 $("optHap").onclick=()=>{HAPTIC=!HAPTIC;store.set("cap-haptic",HAPTIC?"1":"0");syncOpts();buzz("tap")};
-
+ 
 // Affichage simple, sans animation
 function flap(text){
   const el=$("flap"); el.innerHTML="";
   const t=document.createElement("span"); t.className="plain"; t.textContent=text.toUpperCase();
   el.appendChild(t);
 }
-
+ 
 function chips(){
   const z=$("zones"); z.innerHTML="";
   ZONES.forEach((name,idx)=>{
@@ -249,38 +248,60 @@ function chips(){
   });
 }
 $("dirs").onclick=e=>{const b=e.target.closest(".chip"); if(!b)return; dir=b.dataset.d;
-  document.querySelectorAll("#dirs .chip").forEach(c=>c.setAttribute("aria-pressed",c===b)); showBest(); homeTitle()};
-function homeTitle(){flap(isFlag()?"Drapeaux":"Capitales")}
+  document.querySelectorAll("#dirs .chip").forEach(c=>c.setAttribute("aria-pressed",c===b)); lensChips(); showBest(); homeTitle()};
+function homeTitle(){flap(dir==="full"?"Full":isFlag(dir)?"Drapeaux":"Capitales")}
+// Nombre de questions : 10/20/30/Toutes, ou 20/40/Toutes en mode full
+function lensChips(){
+  const list=dir==="full"?[20,40,0]:[10,20,30,0], el=$("lens");
+  if(!list.includes(ROUND)) ROUND=list[0];
+  el.innerHTML="";
+  list.forEach(n=>{const b=document.createElement("button");b.className="chip";b.id=n?"n"+n:"nall";b.dataset.n=n;
+    b.textContent=n||"Toutes";b.setAttribute("aria-pressed",n===ROUND);el.appendChild(b)});
+}
 $("lens").onclick=e=>{const b=e.target.closest(".chip"); if(!b)return; ROUND=+b.dataset.n;
   document.querySelectorAll("#lens .chip").forEach(c=>c.setAttribute("aria-pressed",c===b)); showBest()};
 const poolSize=()=>zone==="Monde"?ALL.length:D[zone].length;
-const roundLen=()=>ROUND?Math.min(ROUND,poolSize()):poolSize();
+// en mode full, chaque pays peut sortir 2 fois : une question capitale + une question drapeau
+const maxLen=()=>poolSize()*(dir==="full"?2:1);
+const roundLen=()=>ROUND?Math.min(ROUND,maxLen()):maxLen();
 $("chs").onclick=e=>{const b=e.target.closest(".chip"); if(!b)return; CHOICES=+b.dataset.c;
   document.querySelectorAll("#chs .chip").forEach(c=>c.setAttribute("aria-pressed",c===b)); showBest()};
 const bestKey=()=>`cap-best-${zone}-${dir}-${ROUND||"all"}`+(CHOICES>4?`-c${CHOICES}`:"");
 function intro(){return `${roundLen()} questions, facile`}
 function showBest(){const b=store.get(bestKey()); $("ask").textContent=intro();
   $("best").textContent=b?`Record ${zone} (${ROUND||"toutes"}) : ${b} pts`:"Plus vite, plus de points"}
-
+ 
 function start(){
   const pool=zone==="Monde"?ALL:ALL.filter(x=>x.z===zone);
-  qs=shuffle([...pool]).slice(0,roundLen()); i=0;pts=0;streak=0;bestStreak=0;good=0;misses=[];
+  if(dir==="full"){
+    // moitié capitales (pays→capitale OU capitale→pays), moitié drapeaux (drapeau→pays OU pays→drapeau)
+    // une capitale ne tombe qu'une fois, un drapeau aussi ; « Toutes » = toutes les capitales + tous les drapeaux
+    const n=roundLen(), nc=Math.ceil(n/2), nf=n-nc, flip=(a,b)=>Math.random()<.5?a:b;
+    const items=shuffle([...shuffle([...pool]).slice(0,nc).map(q=>[q,flip("pc","cp")]),
+                         ...shuffle([...pool]).slice(0,nf).map(q=>[q,flip("fp","pf")])]);
+    // évite le même pays deux questions de suite
+    for(let j=1;j<items.length;j++) if(items[j][0]===items[j-1][0])
+      for(let t=0;t<items.length;t++){const k=(j+1+t)%items.length;
+        if(k!==j&&k!==j-1&&items[k][0]!==items[j-1][0]&&items[(k+1)%items.length]?.[0]!==items[j][0]&&items[(k-1+items.length)%items.length]?.[0]!==items[j][0]){[items[j],items[k]]=[items[k],items[j]];break}}
+    qs=items.map(x=>x[0]); qd=items.map(x=>x[1]);
+  }else{ qs=shuffle([...pool]).slice(0,roundLen()); qd=qs.map(()=>dir); }
+  i=0;pts=0;streak=0;bestStreak=0;good=0;misses=[];
   $("home").hidden=true;$("end").hidden=true;$("game").hidden=false;$("feedback").hidden=false;
   $("pts").textContent=0;$("streak").textContent=0; Fire.set(0);
   $("lblRegion").textContent=zone; next();
 }
 function next(){
   if(i>=qs.length) return finish();
-  locked=false;
+  locked=false; cur=qd[i];
   const q=qs[i], same=ALL.filter(x=>x!==q&&(x.z===q.z));
-  const pick={pc:"k",cp:"c",fp:"c",pf:"f"}[dir];
+  const pick={pc:"k",cp:"c",fp:"c",pf:"f"}[cur];
   const seen=new Set([q[pick]]), wrong=[];
   for(const x of [...shuffle(same),...shuffle(ALL.filter(x=>x.z!==q.z))]){ if(wrong.length>=CHOICES-1)break; if(!seen.has(x[pick])){seen.add(x[pick]);wrong.push(x)} }
   const opts=shuffle([q,...wrong]);
-  $("lblTop").textContent={pc:"Pays",cp:"Capitale",fp:"Drapeau",pf:"Pays"}[dir];
-  if(dir==="fp") $("flap").innerHTML=`<span class="bigflag" role="img" aria-label="Drapeau à identifier">${q.f}</span>`;
-  else flap(dir==="cp"?q.k:q.c);
-  $("ask").textContent={pc:"Quelle est sa capitale ?",cp:"Capitale de quel pays ?",fp:"Quel est ce pays ?",pf:"Quel est son drapeau ?"}[dir];
+  $("lblTop").textContent={pc:"Pays",cp:"Capitale",fp:"Drapeau",pf:"Pays"}[cur];
+  if(cur==="fp") $("flap").innerHTML=`<span class="bigflag" role="img" aria-label="Drapeau à identifier">${q.f}</span>`;
+  else flap(cur==="cp"?q.k:q.c);
+  $("ask").textContent={pc:"Quelle est sa capitale ?",cp:"Capitale de quel pays ?",fp:"Quel est ce pays ?",pf:"Quel est son drapeau ?"}[cur];
   $("qn").textContent=`${i+1}/${qs.length}`; $("feedback").textContent="";
   const g=$("game"); g.innerHTML=""; g.classList.toggle("many",CHOICES>4);
   opts.forEach((o,idx)=>{
@@ -329,12 +350,12 @@ function finish(){
   $("finalSub").textContent=`Best streak : ${bestStreak} · Record ${zone} : ${Math.max(prev,pts)}`;
   const ul=$("misses"); ul.innerHTML="";
   $("missLbl").textContent=misses.length?"Tu fera gaffe t'a oublié ça":"Nice";
-  misses.forEach(m=>{const li=document.createElement("li");li.innerHTML="<span></span><span></span>";li.firstChild.textContent=`${m.f}  ${m.c}`;li.lastChild.textContent=m.k;ul.appendChild(li)});
+  [...new Set(misses)].forEach(m=>{const li=document.createElement("li");li.innerHTML="<span></span><span></span>";li.firstChild.textContent=`${m.f}  ${m.c}`;li.lastChild.textContent=m.k;ul.appendChild(li)});
 }
 $("start").onclick=start; $("again").onclick=start;
 $("menu").onclick=()=>{$("end").hidden=true;$("home").hidden=false;homeTitle();$("qn").textContent="–";Fire.set(0);showBest()};
-
-chips(); showBest();
+ 
+chips(); lensChips(); showBest();
 homeTitle();
 </script>
 <script>if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>
@@ -381,7 +402,7 @@ function drawPlanet(){
   x.restore();
   EARTH={cx,cy,R,lands:landPaths};
 }
-
+ 
 // Feu : plus la série monte, plus la Terre brûle (série 0 = calme, série 10+ = en feu)
 // - séries 1 à 3 : des petites flammes apparaissent une par une sur les continents
 // - à partir de la série 4 : une grosse flamme derrière la Terre, qui grandit jusqu'à la série 10
@@ -389,13 +410,13 @@ const Fire=(()=>{
   const c=document.getElementById("fire"), probe=document.createElement("canvas").getContext("2d");
   const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
   let x,W,H,heat=0,target=0,burn=0,burnT=0,nOn=0,flare=0,spots=[],raf=0,last=0,time=0;
-
+ 
   // série → chaleur (0..1)
   const bigOf=n=>n<4?0:Math.min(1,(n-3)/7);           // grosse flamme : 0 avant la série 4, max à 10
   const burnOf=n=>Math.min(1,Math.max(0,n)/8);           // continents qui roussissent
   const countOf=n=>n<=0?0:n<=4?n:Math.min(spots.length,4+(n-4)*2); // 1,2,3,4 puis +2 par bonne réponse
   const easeBack=t=>{const k=1.9;t=Math.min(1,Math.max(0,t));return 1+(k+1)*Math.pow(t-1,3)+k*Math.pow(t-1,2)};
-
+ 
   function resize(){
     const dpr=Math.min(2,devicePixelRatio||1); W=innerWidth;H=innerHeight;
     c.width=W*dpr;c.height=H*dpr; x=c.getContext("2d"); x.setTransform(dpr,0,0,dpr,0,0);
@@ -410,7 +431,7 @@ const Fire=(()=>{
     spots.sort((a,b)=>b.y-a.y); spots.forEach((s,j)=>{if(old[j]) s.a=old[j].a});
     paint();
   }
-
+ 
   let on=true;
   function enable(v){on=v; if(!v) set(0)}
   function set(n){
@@ -421,7 +442,7 @@ const Fire=(()=>{
     if(reduce){heat=target;burn=burnT;spots.forEach((s,j)=>s.a=j<nOn?1:0);paint();return}
     if(!raf){last=performance.now();raf=requestAnimationFrame(loop)}
   }
-
+ 
   // contour de la grosse flamme : un cercle autour de la Terre + une grande langue en haut et deux petites sur les côtés
   // forme de flamme (sert pour la grosse ET les petites) : cercle de rayon base + langues de feu, pointe vers le haut
   function flamePath(cx,cy,base,tip,t,N=120){
@@ -436,7 +457,7 @@ const Fire=(()=>{
     }
     p.closePath(); return p;
   }
-
+ 
   function paint(){
     if(!x) return;
     x.clearRect(0,0,W,H);
@@ -479,7 +500,7 @@ const Fire=(()=>{
       });
     }
   }
-
+ 
   function loop(now){
     const dt=Math.min(.05,(now-last)/1000); last=now; time+=dt;
     heat+=(target-heat)*Math.min(1,dt*(target>heat?2.5:1.6)); if(Math.abs(target-heat)<.003) heat=target;
@@ -492,9 +513,10 @@ const Fire=(()=>{
   }
   return {set,resize,enable};
 })();
-
+ 
 drawPlanet(); Fire.resize(); Fire.enable(FIRE);
 let rz; addEventListener("resize",()=>{clearTimeout(rz);rz=setTimeout(()=>{drawPlanet();Fire.resize()},200)});
 </script>
 </body>
 </html>
+ 
